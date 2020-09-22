@@ -15,14 +15,21 @@ import json
 #                 for title in titles:
 #                     name=title.find('h1').text
 #                     adress=soup.find('a', class_='_15QfMZ2L', href='#MAPVIEW').text
-#                     prix_moyen=soup.find(class_='_1XLfiSsv').text
-#                     print('Nom : ' + name, 'Adresse : ' + adress, 'Fouchette : ' + prix_moyen)
-#                     data={'\n'
-#                     "Enseigne" : name,'\n'
-#                     "Adresse" : adress, '\n'
-#                     "Fourchette de prix" : prix_moyen'\n'
-#                     }
-#                     json.dump(data, outf)
+#                     toto = soup.find_all('div', class_='_1XLfiSsv')
+#                     tata=[]
+#                     for element in toto:
+#                         speciality=(element.text).replace(',','').split()
+#                         tata.append(speciality)
+#                         return tata[1][0]
+#                         prix_moyen=soup.find(class_='_1XLfiSsv').text
+#                         print('Nom : ' + name, 'Adresse : ' + adress, 'Spécialité : ' + tata, 'Fouchette : ' + prix_moyen)
+#                         data={
+#                         "Enseigne" : name,
+#                         "Adresse" : adress,
+#                         "Spécialité" : tata,
+#                         "Fourchette de prix" : prix_moyen
+#                         }
+#                         json.dump(data, outf)
 #             time.sleep(3)
 
 
@@ -38,23 +45,21 @@ soup=BeautifulSoup(res.text,'html.parser')
 #########################TABLE RESTO##############################
 
 #Récupération des noms des restaurants
-titles=soup.find_all(class_='_1hkogt_o')
-for title in titles:
-    name=title.find('h1').text
-    #print(name)
+name=soup.find('h1', class_='_3a1XQ88S').text
+#print(name)
 
 #Récupération des adresses des restaurants
 adress=soup.find('a', class_='_15QfMZ2L', href='#MAPVIEW').text
 #print(adress)
 
 #Récupération de la spécialité des restaurants
-totos=soup.find_all(class_='_13OzAOXO _34GKdBMV')
-for toto in totos:
-    speciality=toto.find().text
-#print(speciality)
-totos=soup.find_all('a', class_='_2mn01bsa')
-for toto in totos:
-    speciality=toto.find('')
+toto = soup.find_all('div', class_='_1XLfiSsv')
+tata=[]
+for element in toto:
+    speciality=(element.text).replace(',','').split()
+    tata.append(speciality)
+    return tata[1][0]
+#print(tata[1][0])
 
 #Récupération de la fourchette moyenne des prix des restaurants
 prix_moyen=soup.find(class_='_1XLfiSsv').text
@@ -71,10 +76,25 @@ nbre_avis=soup.find('a', class_='_10Iv7dOs', href='#REVIEWS').text
 #print(nbre_avis)
 
 #Tentative ratée pour récup' les notes sous forme de bulles
-tests=soup.find_all(alt='4,5 sur 5 bulles')
+tests=soup.find_all(class_='ui_bubble_rating bubble_35')
 for test in tests:
-    bulle=test.find('alt')
-    #print(bulle)
+    toto= test.select('alt')
+    #print(toto)
+
+# for test in tests:
+#     bulle=tests[0]['alt']
+#     print(bulle)
+
+# toto=soup.find_all(class_='ui_bubble_rating bubble_35')
+# print(toto)
+
+
+
+
+
+# for test in tests:
+#     bulle=test.text
+#     print(bulle)
 
 #Récupération 
 headers=soup.find_all(class_='reason ui_column is-4')
@@ -82,7 +102,7 @@ for header in headers:
     avis_first=header.find(class_='header_desktop').text
     #print(avis_first)
 
-
+"""
 dic={
 "Enseigne" : name,
 "Adresse" : adress, 
@@ -100,4 +120,4 @@ df = pd.DataFrame({
 index=[0])
 
 #print(df)
-
+"""
