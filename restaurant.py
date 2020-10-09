@@ -5,8 +5,8 @@ from typing import List, Optional
 class Restaurant(BaseModel):
     enseigne: str
     adresse: str
-    specialite: str
-    fourchette_de_prix: int
-    note_globale: float
-    nombre_avis: int
-    top_avis: str
+    specialite: List[str]
+    fourchette_de_prix: str
+    note_globale: str
+    nombre_avis: str
+    top_avis: List[str]
