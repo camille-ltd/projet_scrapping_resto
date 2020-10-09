@@ -2,20 +2,14 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 import uvicorn
 from bson.objectid import ObjectId
-from typing import List, Optional
+from typing import List, Optional, Any
 from restaurant import Restaurant
 app = FastAPI()
 
-CLIENT = MongoClient(
-    "mongodb+srv://user:resu@cluster0.tdpqz.gcp.mongodb.net/resto?retryWrites=true&w=majority")
+CLIENT = MongoClient("mongodb+srv://user:resu@cluster0.tdpqz.gcp.mongodb.net/test")
 
-DB = CLIENT["resto"]
+DB = CLIENT["Resto"]
 RESTOS = DB["restaurants"]
-
-
-@app.get("/restaurants")
-async def root():
-    return {"message": "Super les filles"}
 
 
 @app.post("/restaurants")
@@ -25,7 +19,7 @@ async def create_restaurant(restaurant: Restaurant):
 
 
 @app.post("/restaurants/bulk")
-async def insert_many_restaurants(restaurant: List[Restaurant]):
+async def insert_many_restaurants(restaurants: List[Restaurant]):
     restaurants_list = []
     for r in restaurants:
         restaurants_list.append(r.dict())
@@ -45,10 +39,17 @@ async def get_all_restaurants():
         restaurant_list.append(restaurant)
     return restaurant_list
 
+@app.get("/restaurants/notes")
+async def get_notes():
+    restaurants = RESTOS.find(projection=["note_globale"])
+    restaurant_list = []
+    for restaurant in restaurants:
+        restaurant["_id"] = str(restaurant["_id"])
+        restaurant_list.append(restaurant)
+    return restaurant_list
 
 @app.get("/restaurants/id/{restaurant_id}")
 async def get_restaurant_by_id(restaurant_id):
-    # SELECT * FROM STUDENTS WHERE id = student_id
     restaurant = RESTOS.find_one({"_id": ObjectId(restaurant_id)})
     if restaurant:
         restaurant["_id"] = str(restaurant["_id"])
@@ -59,7 +60,6 @@ async def get_restaurant_by_id(restaurant_id):
 
 @app.get("/restaurants/enseigne/{enseigne}")
 async def get_restaurant_by_enseigne(enseigne):
-    # SELECT * FROM STUDENTS WHERE id = student_id
     restaurant = RESTOS.find_one({"enseigne": enseigne})
     if restaurant:
         restaurant["_id"] = str(restaurant["_id"])
